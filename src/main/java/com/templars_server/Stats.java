@@ -71,6 +71,7 @@ public class Stats {
 
     void onClientConnectEvent(ClientConnectEvent event) {
         Player player = createPlayerIfNotExists(event.getSlot(), event.getIp(), event.getName());
+        player.setAlias(event.getName());
         database.getAccountStore().registerAlias(player.getAccount(), player.getAlias(), player.getAliasStripped());
     }
 
