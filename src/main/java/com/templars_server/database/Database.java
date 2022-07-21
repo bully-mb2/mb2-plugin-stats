@@ -1,18 +1,15 @@
 package com.templars_server.database;
 
-import com.templars_server.Application;
 import com.templars_server.database.store.AccountStore;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Database {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
     private final DataSource dataSource;
     private final AccountStore accountStore;
