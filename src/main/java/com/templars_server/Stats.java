@@ -141,6 +141,25 @@ public class Stats {
         );
     }
 
+    public void onClientUserinfoChangedEvent(ClientUserinfoChangedEvent event) {
+        Player player = context.getPlayers().get(event.getSlot());
+        if (player == null) {
+            return;
+        }
+
+        if (player.getAlias().equals(event.getName())) {
+            return;
+        }
+
+        player.setAlias(event.getName());
+        Account account = player.getAccount();
+        if (account == null) {
+            return;
+        }
+
+        database.getAccountStore().registerAlias(account, player.getAlias(), player.getAliasStripped());
+    }
+
     public void onSayEvent(SayEvent event) {
         String message = event.getMessage();
         for (Command<Context> command : commands) {

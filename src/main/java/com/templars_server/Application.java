@@ -53,6 +53,7 @@ public class Application {
         client.putEventListener(stats::onClientDisconnectEvent, ClientDisconnectEvent.class);
         client.putEventListener(stats::onShutdownGameEvent, ShutdownGameEvent.class);
         client.putEventListener(stats::onKillEvent, KillEvent.class);
+        client.putEventListener(stats::onClientUserinfoChangedEvent, ClientUserinfoChangedEvent.class);
         client.putEventListener(stats::onSayEvent, SayEvent.class);
 
         LOG.info("Connecting to MQTT broker");
