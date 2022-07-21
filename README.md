@@ -32,6 +32,12 @@ This app uses 4 tables to identify players across sessions:
    - More reliable
    - Only one UUID per ja_guid
 
+# Configuration
+If you want to update player names constantly you can enable the ClientUserinfoChanged event in the log reader
+```
+parser.disable.clientuserinfochanged=false
+```
+
 # Running
 ```
 java -jar mb2-plugin-stats-VERSION.jar
