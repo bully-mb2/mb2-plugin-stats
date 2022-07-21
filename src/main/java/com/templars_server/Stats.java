@@ -109,6 +109,10 @@ public class Stats {
             return;
         }
 
+        if (killer.getSlot() == victim.getSlot()) {
+            return;
+        }
+
         if (killer.getTeam().equals(victim.getTeam())) {
             killer.getAccount().addBalance(TEAMKILL_PENALTY);
             LOG.info(killer.getAliasStripped() + " team killed " + victim.getAliasStripped());
