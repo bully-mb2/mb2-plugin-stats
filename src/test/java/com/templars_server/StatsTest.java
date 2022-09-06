@@ -27,9 +27,10 @@ class StatsTest {
 
     @Test
     void testOnClientUserinfoChangedEvent_SparseData_NoExceptions() {
-        context.getPlayers().put(21, new Player(0, "", null, null));
+        int testSlot = 21;
+        context.getPlayers().put(testSlot, new Player(testSlot, "", null, null));
         ClientUserinfoChangedEvent testMessage = new ClientUserinfoChangedEvent();
-        testMessage.setSlot(21);
+        testMessage.setSlot(testSlot);
         testMessage.setColor1(0);
         testMessage.setColor2(0);
         testMessage.setModelVariant(0);
