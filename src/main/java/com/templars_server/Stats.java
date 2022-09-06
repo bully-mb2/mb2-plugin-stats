@@ -142,12 +142,16 @@ public class Stats {
     }
 
     public void onClientUserinfoChangedEvent(ClientUserinfoChangedEvent event) {
+        if (event.getName() == null) {
+            return;
+        }
+
         Player player = context.getPlayers().get(event.getSlot());
         if (player == null) {
             return;
         }
 
-        if (player.getAlias().equals(event.getName())) {
+        if (player.getAlias() != null && player.getAlias().equals(event.getName())) {
             return;
         }
 

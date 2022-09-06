@@ -47,7 +47,11 @@ public class Player {
 
     public void setAlias(String alias) {
         this.alias = alias;
-        this.aliasStripped = alias.replaceAll("\\^[0-9]", "");
+        if (alias == null) {
+            this.aliasStripped = null;
+        } else {
+            this.aliasStripped = alias.replaceAll("\\^[0-9]", "");
+        }
     }
 
     public String getJaguid() {
