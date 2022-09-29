@@ -5,27 +5,32 @@ import com.templars_server.command.BalanceCommand;
 import com.templars_server.database.Database;
 import com.templars_server.database.model.Account;
 import com.templars_server.database.store.AccountStore;
+import com.templars_server.mb2_log_reader.schema.*;
 import com.templars_server.model.Context;
 import com.templars_server.model.Display;
 import com.templars_server.model.Player;
 import com.templars_server.util.command.Command;
 import com.templars_server.util.command.InvalidArgumentException;
 import com.templars_server.util.rcon.RconClient;
-import generated.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Stats {
 
     private static final Logger LOG = LoggerFactory.getLogger(Stats.class);
+    private static final DecimalFormat KILL_DECIMAL_FORMAT = new DecimalFormat(
+            "#.##",
+            DecimalFormatSymbols.getInstance(Locale.GERMAN)
+    );
     private static final int KILL_REWARD = 6;
     private static final int TEAMKILL_PENALTY = -12;
+    private static final String PREFIX = "^6MVP >> ^7";
+
 
     private final Context context;
     private final RconClient rcon;
@@ -67,6 +72,7 @@ public class Stats {
         }
 
         player.setTeam(event.getTeam());
+        player.setMbClass(event.getForcePowers().getMbClass());
     }
 
     void onClientConnectEvent(ClientConnectEvent event) {
@@ -139,15 +145,21 @@ public class Stats {
                         + " and now have "
                         + Display.renderBalance(killer.getAccount().getBalance())
         );
+
+        killer.addRoundKill(calculateKillWeight(victim.getMbClass()));
     }
 
     public void onClientUserinfoChangedEvent(ClientUserinfoChangedEvent event) {
+        if (event.getName() == null) {
+            return;
+        }
+
         Player player = context.getPlayers().get(event.getSlot());
         if (player == null) {
             return;
         }
 
-        if (player.getAlias().equals(event.getName())) {
+        if (player.getAlias() != null && player.getAlias().equals(event.getName())) {
             return;
         }
 
@@ -173,6 +185,56 @@ public class Stats {
             } catch (Exception e) {
                 LOG.error("Uncaught exception during command execution", e);
             }
+        }
+    }
+
+    public void onSendingGameReportEvent(SendingGameReportEvent event) {
+        double mostKills = 0d;
+        Player mostKillsPlayer = null;
+        for (Player player : context.getPlayers().values()) {
+            if (player.getRoundKills() > mostKills) {
+                mostKills = player.getRoundKills();
+                mostKillsPlayer = player;
+            }
+
+            player.setRoundKills(0d);
+        }
+
+
+        if (mostKillsPlayer != null && mostKills > 0.01d) {
+            String killString = "kill";
+            if (mostKills > 1d) {
+                killString += "s";
+            }
+
+            LOG.info("Round ended " + mostKillsPlayer.getAliasStripped() + " is MVP with " + mostKills + " " + killString);
+            rcon.printAll(String.format(
+                    PREFIX + "%s^7 was this rounds ^6MVP^7 with %s %s",
+                    mostKillsPlayer.getAlias(),
+                    KILL_DECIMAL_FORMAT.format(mostKills),
+                    killString)
+            );
+            return;
+        }
+
+        LOG.info("Round ended with no MVP = " + mostKills);
+    }
+
+    private double calculateKillWeight(MBClass mbClass) {
+        if (mbClass == null) {
+            return 1d;
+        }
+
+        switch (mbClass) {
+            case COMMANDER:
+            case ELITE_TROOPER:
+            case CLONE_TROOPER:
+                return 0.5d;
+            case IMPERIAL_SOLDIER:
+            case REBEL_SOLDIER:
+                return 0.33333333d;
+            default:
+                return 1d;
         }
     }
 
