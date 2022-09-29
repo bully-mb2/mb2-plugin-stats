@@ -5,13 +5,13 @@ import com.templars_server.command.BalanceCommand;
 import com.templars_server.database.Database;
 import com.templars_server.database.model.Account;
 import com.templars_server.database.store.AccountStore;
+import com.templars_server.mb2_log_reader.schema.*;
 import com.templars_server.model.Context;
 import com.templars_server.model.Display;
 import com.templars_server.model.Player;
 import com.templars_server.util.command.Command;
 import com.templars_server.util.command.InvalidArgumentException;
 import com.templars_server.util.rcon.RconClient;
-import generated.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

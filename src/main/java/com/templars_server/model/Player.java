@@ -1,8 +1,7 @@
 package com.templars_server.model;
 
 import com.templars_server.database.model.Account;
-import generated.MBClass;
-import generated.Team;
+import com.templars_server.mb2_log_reader.schema.*;
 
 public class Player {
 
